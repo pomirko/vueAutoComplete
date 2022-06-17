@@ -48,7 +48,8 @@ export default {
       query: '',
       selectedItemIndex: 0,
       autoSelected: '',
-      itemsList: []
+      itemsList: [],
+      memo: this.memorizationItemsList()
     }
   },
   methods: {
@@ -66,6 +67,7 @@ export default {
         .length  === 0 ) {
           this.resetItemsList()
           this.resetPlaceholder()
+          this.memo('ResetCacheAfterAddedNewItemInList')
           return this.addNewItem(this.query)
       }
       this.chnageInputValue()
@@ -78,6 +80,7 @@ export default {
         .length  === 0 ) {
           this.resetItemsList()
           this.resetPlaceholder()
+          this.memo('ResetCacheAfterAddedNewItemInList')
           return this.addNewItem(this.query)
       }
       this.chnageInputValue()
@@ -144,16 +147,33 @@ export default {
         return []
       }
       // think about memorization
-      this.itemsList = this.items
-        .filter(e => e[this.filterBy] !== this.query)
-        .filter(e => e[this.filterBy].slice(0, this.query.length) === this.query)
-        .sort((a,b) => a[this.filterBy].length - b[this.filterBy].length)
-        .slice(0,5)
+      // this.itemsList = this.items
+      // .filter(e => e[this.filterBy] !== query)
+      // .filter(e => e[this.filterBy].slice(0, query.length) === query)
+      // .sort((a,b) => a[this.filterBy].length - b[this.filterBy].length)
+      // .slice(0,5)
+      this.itemsList = this.memo(this.query).slice(0,5)
       if (this.selectedItemIndex >= this.itemsList.length) {
         this.resetSelectedIndex()
       }
       this.updatePlaceholder(this.selectedItemIndex)
       return this.itemsList.unshift({id: 0, currency: this.query})
+    },
+    memorizationItemsList() {
+      let cache = {} 
+      return (query) => {
+        if (query ==='ResetCacheAfterAddedNewItemInList') cache = {}
+        if (query in cache) {
+          return cache[query]
+        } else {
+          let result = this.items
+          .filter(e => e[this.filterBy] !== query)
+          .filter(e => e[this.filterBy].slice(0, query.length) === query)
+          .sort((a,b) => a[this.filterBy].length - b[this.filterBy].length)
+          cache[query] = result
+          return result          
+        }
+      }
     }
   }
 }
