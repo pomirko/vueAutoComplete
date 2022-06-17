@@ -12,7 +12,10 @@
       @keydown.enter="itemKeyboardSelected"
       @click-outside="ousideClick"
     />
-    <!-- think about $refs.selectedValue.select(), should improve -->
+    <!-- 
+      think about $refs.selectedValue.select(), should improve 
+      need to add lib for outside click handler
+    -->
     <pre
       class="placeholder"
     >{{ autoSelected }}
@@ -151,12 +154,6 @@ export default {
       }
       this.updatePlaceholder(this.selectedItemIndex)
       return this.itemsList.unshift({id: 0, currency: this.query})
-    },
-    ousideClick() {
-      this.resetSelectedIndex()
-      this.resetItemsList()
-      this.resetQuery()
-      this.resetPlaceholder()
     }
   }
 }
